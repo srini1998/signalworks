@@ -39,4 +39,4 @@ an improvement. Cost is $0 (local inference); token counts are recorded per run.
 
 - Supabase was not used for the control plane. The spec suggests Supabase/Postgres; this lab uses a
   separate local Postgres with RLS to stay independent of Breakroom's local Supabase instance.
-- No public deployment, by design. The user asked for Grafana work to stay local.
+- No public deployment of the lab itself: it needs Docker, Grafana and a local model. A free public end-user site is separate.

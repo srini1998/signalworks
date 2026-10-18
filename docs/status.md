@@ -1,7 +1,6 @@
 # Signalworks status
 
-Local-only implementation of graf1 (five modules) and graf2 (FilterProof). Never pushed or hosted, per
-the user's instruction. Owner: Claude Code (took over from Codex on 2026-10-18; see
+Local-only implementation of graf1 (five modules) and graf2 (FilterProof). Kept local until the user approved publishing the source on 2026-10-18; the lab itself still runs only on localhost. Owner: Claude Code (took over from Codex on 2026-10-18; see
 `../delivery/status.md`).
 
 ## Implemented (all six modules)

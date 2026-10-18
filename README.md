@@ -88,7 +88,7 @@ npm run browser                                  # Playwright end-to-end flow + 
 
 ## Boundaries
 
-Local only, synthetic fixtures, no real credentials, nothing deployed publicly. Grafana already
+Runs locally, synthetic fixtures, no real credentials. Source is public; the lab itself is not hosted. Grafana already
 provides alert testing, missing-series handling, routing previews and query help. Signalworks adds
 repeatable contracts, end-to-end evidence and regression runs around them, and doesn't claim those
 features as new. See `docs/limitations.md` and `docs/architecture.md`.
