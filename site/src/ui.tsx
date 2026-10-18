@@ -137,6 +137,9 @@ export function Shell({
         <a href="https://my-portfolio-three-omega-46.vercel.app">
           {ja ? "すべてのプロジェクト" : "All projects"} ↗
         </a>
+        <a href="/THIRD_PARTY_NOTICES.txt">
+          {ja ? "モデル・ライセンス" : "Model & licenses"}
+        </a>
       </footer>
     </>
   );
