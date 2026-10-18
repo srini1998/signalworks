@@ -210,6 +210,7 @@ function App() {
               {provenance} · {snapshot.capturedAt.slice(0, 10)}
             </p>
             <textarea
+              disabled={busy}
               aria-label="Prometheus metrics"
               value={text}
               maxLength={250000}
@@ -232,6 +233,7 @@ function App() {
             <label>
               {t("Metric name", "メトリクス名")}
               <input
+                disabled={busy}
                 value={contract.name}
                 onChange={(e) => {
                   setContract((c) => ({ ...c, name: e.target.value }));
@@ -243,6 +245,7 @@ function App() {
               <label>
                 {t("Expected type", "期待する型")}
                 <select
+                  disabled={busy}
                   value={contract.type}
                   onChange={(e) => {
                     setContract((c) => ({ ...c, type: e.target.value }));
@@ -259,6 +262,7 @@ function App() {
               <label>
                 {t("Exposed-series cap", "出力系列の上限")}
                 <input
+                  disabled={busy}
                   type="number"
                   min="1"
                   max="5000"
@@ -276,6 +280,7 @@ function App() {
                 "必須ラベル（カンマ区切り）",
               )}
               <input
+                disabled={busy}
                 value={labelsText}
                 onChange={(e) => {
                   setLabelsText(e.target.value);
@@ -295,6 +300,7 @@ function App() {
             </button>
             <button
               className="quiet"
+              disabled={busy}
               onClick={() => {
                 setText(snapshot.text);
                 setContract(initial);
@@ -364,10 +370,7 @@ function App() {
             <ModelControl
               state={ai.state}
               load={ai.load}
-              stop={() => {
-                ai.stop();
-                setBusy(false);
-              }}
+              stop={ai.stop}
               ja={ja}
             />
             <button
