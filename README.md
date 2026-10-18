@@ -31,11 +31,12 @@ click below.
 
 ## Results on the local stack (details in `docs/verification.md`)
 
-Every seeded defect was found by the baseline matrix, and every reviewed candidate passed:
+Every reviewed candidate passed, and the baseline matrix found every seeded defect except one
+(AlertScenario v4, whose shortened pending period a fixed 10 s spike can't reveal):
 
 | Module | Reviewed candidate | Seeded defects detected |
 |---|---|---|
-| AlertScenario | pass | missing data mapped to OK (v2), pending removed (v3); v4's shortened pending only by a boundary probe |
+| AlertScenario | pass | missing data mapped to OK (v2), pending removed (v3); v4 missed by the fixed matrix |
 | MetricContract | pass | missing metric, renamed label, 301-series cardinality, ms-under-seconds (witness ratio ×1000) |
 | RouteReplay | pass | matcher typo to default receiver; per-alert grouping |
 | SeriesWatch | pass (4/4 cases explained) | unapproved retirement treated as outage; stale inventory is inconclusive |
@@ -52,10 +53,11 @@ Every seeded defect was found by the baseline matrix, and every reviewed candida
 - A custom-rule value like `swtok_abcdefghijklmnopqrstuvwxyz012345` passed unredacted while
   random-looking values were masked. That is recorded as an observation, not a diagnosed defect.
 
-**Agent vs baseline:** the 3B local model is measurably weaker than the fixed matrix at choosing
-discriminating experiments. In one AlertScenario run it varied a "sustained" breach from 10 to 13 s
-instead of probing a spike at the burst boundary. These runs are reported as recorded, in
-`docs/verification.md`.
+**Agent vs baseline:** the 3B local model is measurably weaker than the fixed matrix. It got
+1 of 12 scored agent runs right (RouteReplay v3), against the baseline's 25 of 27. It repeated
+identical experiments, skipped preconditions, and kept re-proposing rejected actions. Details and
+every recorded decision are in `docs/verification.md`. Crash recovery and the Playwright
+end-to-end flow are verified (`docs/evidence/`).
 
 ## Run it (free, local)
 

@@ -47,9 +47,21 @@ the user's instruction. Owner: Claude Code (took over from Codex on 2026-10-18; 
 `npm run build`, `npm test`, `npm run smoke -- <module:mode:fixture>...`,
 `node --import tsx scripts/verify-recovery.ts`, `npm run browser`, `node --import tsx scripts/report.ts`.
 
-## Next incomplete steps
+## Completed verification (2026-10-18)
 
-- Re-verify RouteReplay baselines with the settle and reproduction rule.
-- Rerun the agent comparisons that started under the old budget logic.
-- Worker crash/recovery verification and the Playwright end-to-end flow.
-- Final `docs/verification.md` with results tables.
+- RouteReplay baselines re-verified with settle + reproduction: v1 pass, v2 matcher typo, v3 grouping.
+- Agent comparisons rerun with guardrails (duplicate guard, rejection feedback, read-only after
+  budget): 1 of 12 scored agent runs correct vs baseline 25 of 27. See `docs/verification.md`.
+- Worker SIGKILL recovery: 4/4 checks (`docs/evidence/recovery.json`).
+- Playwright end-to-end flow including 390 px mobile: all checks, zero page errors
+  (`docs/evidence/browser-check.json`).
+- 16/16 automated tests; migrations 001 and 002 (deadline starts at first claim).
+
+## Open items (not done)
+
+- AlertScenario v4 is missed by the fixed matrix; a boundary-spike probe would catch it but isn't in the baseline.
+- Upstream Alloy issue #7293 was not investigated.
+- FP-007 (low-variety `swtok_` value not redacted) is an observation; the cause isn't diagnosed.
+- Leftovers that need the user's OK to delete: the unused volume `signalworks-sink`, and empty
+  directories under `/Users/srinivenigalla/My-Projects/signalworks` inside the Colima VM's own
+  filesystem (created by an early bind-mount attempt).
