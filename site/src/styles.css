@@ -1,1 +1,245 @@
-@import './base.css';:root{--bg:#161a1e;--panel:#20262b;--ink:#edf0ee;--muted:#a5b0b6;--line:#3a444c;--accent:#e89558;--on-accent:#21170f;--radius:6px}.hero{padding:80px max(5%,calc((100% - 1296px)/2)) 0;border-bottom:1px solid var(--line);background:#1a2025}.hero h1{font-size:clamp(56px,7.6vw,110px);letter-spacing:-.065em}.hero h1 span{color:var(--accent)}.shader{position:absolute;inset:0 0 20% 48%;z-index:-1;opacity:.16;pointer-events:none}.shader>div{height:100%!important;width:100%}.hero-end{display:flex;align-items:flex-end;justify-content:space-between;gap:60px;margin:40px 0 65px}.hero-end p{margin:0;font-size:17px;max-width:550px}.status-strip{display:flex;justify-content:space-between;font:11px 'Geist Mono Variable',monospace;letter-spacing:.07em;padding:24px 0;border-top:1px solid var(--line);color:#a8b6c1}.checker{display:grid;grid-template-columns:1.3fr 1fr;gap:38px;border-top:1px solid var(--line);padding-top:30px}.checker textarea{height:360px;white-space:pre;font:12px/1.8 'Geist Mono Variable',monospace;background:#11161a}.input-head{display:flex;justify-content:space-between;gap:20px;align-items:center}.input-head h3{font-size:23px;margin:0}.input-head button{font-size:11px;padding:10px}.checker .contract{padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:6px}.contract input{width:100%;background:#11161a;border:1px solid var(--line);padding:11px;border-radius:6px;font-size:14px}.contract .quiet{display:block;margin-top:15px}.small-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.verdict{display:grid;grid-template-columns:.7fr 1.3fr;gap:60px;margin-top:50px;border-top:1px solid var(--line);padding-top:35px}.verdict h3{font-size:32px}.checks article{display:flex;gap:15px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--line)}.checks article>svg{flex-shrink:0;color:var(--accent)}.checks article>div{flex:1}.checks strong{font-size:14px;font-weight:500}.checks p{font-size:12px;margin:6px 0 0;color:var(--muted)}.checks span{font:10px 'Geist Mono Variable',monospace;color:var(--muted);padding-top:5px}.explain{display:grid;grid-template-columns:1fr 1fr;gap:70px;margin-top:65px;border-block:1px solid var(--line);padding:40px 0}.explain p{font-size:14px;color:var(--muted)}.module-list{margin:40px 0}.module-list details{padding:20px 0;margin:0}.module-list summary{display:flex;gap:25px;align-items:center;font-size:18px;list-style:revert}.module-list summary span{font:12px 'Geist Mono Variable',monospace;color:var(--accent)}.module-list summary b{font-weight:500;flex:1}.module-list summary em{font:11px 'Geist Mono Variable',monospace;color:var(--muted);font-style:normal}.module-list p{font-size:14px;color:var(--muted);padding-left:40px}@media(max-width:760px){.hero{padding:60px 6% 0}.hero h1{font-size:54px}.hero-end{display:block;margin:30px 0 45px}.hero-end .cta{margin-top:25px}.status-strip{font-size:8px}.checker,.verdict,.explain{grid-template-columns:1fr;gap:28px}.checker .contract{padding:22px}.verdict h3{font-size:28px}.input-head{flex-wrap:wrap}.module-list summary{font-size:16px;gap:15px}.module-list summary em{font-size:9px}.shader{inset:0;opacity:.05}:lang(ja) .hero h1{font-size:42px}}
+@import "./base.css";
+:root {
+  --bg: #161a1e;
+  --panel: #20262b;
+  --ink: #edf0ee;
+  --muted: #a5b0b6;
+  --line: #3a444c;
+  --accent: #e89558;
+  --on-accent: #21170f;
+  --radius: 6px;
+}
+.hero {
+  padding: 80px max(5%, calc((100% - 1296px) / 2)) 0;
+  border-bottom: 1px solid var(--line);
+  background: #1a2025;
+}
+.hero h1 {
+  font-size: clamp(56px, 7.6vw, 110px);
+  letter-spacing: -0.065em;
+}
+.hero h1 span {
+  color: var(--accent);
+}
+.shader {
+  position: absolute;
+  inset: 0 0 20% 48%;
+  z-index: -1;
+  opacity: 0.16;
+  pointer-events: none;
+}
+.shader > div {
+  height: 100% !important;
+  width: 100%;
+}
+.hero-end {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 60px;
+  margin: 40px 0 65px;
+}
+.hero-end p {
+  margin: 0;
+  font-size: 17px;
+  max-width: 550px;
+}
+.status-strip {
+  display: flex;
+  justify-content: space-between;
+  font:
+    11px "Geist Mono Variable",
+    monospace;
+  letter-spacing: 0.07em;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  color: #a8b6c1;
+}
+.checker {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 38px;
+  border-top: 1px solid var(--line);
+  padding-top: 30px;
+}
+.checker textarea {
+  height: 360px;
+  white-space: pre;
+  font:
+    12px/1.8 "Geist Mono Variable",
+    monospace;
+  background: #11161a;
+}
+.input-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+.input-head h3 {
+  font-size: 23px;
+  margin: 0;
+}
+.input-head button {
+  font-size: 11px;
+  padding: 10px;
+}
+.checker .contract {
+  padding: 28px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.contract input {
+  width: 100%;
+  background: #11161a;
+  border: 1px solid var(--line);
+  padding: 11px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.contract .quiet {
+  display: block;
+  margin-top: 15px;
+}
+.small-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.verdict {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 60px;
+  margin-top: 50px;
+  border-top: 1px solid var(--line);
+  padding-top: 35px;
+}
+.verdict h3 {
+  font-size: 32px;
+}
+.checks article {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.checks article > svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.checks article > div {
+  flex: 1;
+}
+.checks strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.checks p {
+  font-size: 12px;
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+.checks span {
+  font:
+    10px "Geist Mono Variable",
+    monospace;
+  color: var(--muted);
+  padding-top: 5px;
+}
+.explain {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  margin-top: 65px;
+  border-block: 1px solid var(--line);
+  padding: 40px 0;
+}
+.explain p {
+  font-size: 14px;
+  color: var(--muted);
+}
+.module-list {
+  margin: 40px 0;
+}
+.module-list details {
+  padding: 20px 0;
+  margin: 0;
+}
+.module-list summary {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  font-size: 18px;
+  list-style: revert;
+}
+.module-list summary span {
+  font:
+    12px "Geist Mono Variable",
+    monospace;
+  color: var(--accent);
+}
+.module-list summary b {
+  font-weight: 500;
+  flex: 1;
+}
+.module-list summary em {
+  font:
+    11px "Geist Mono Variable",
+    monospace;
+  color: var(--muted);
+  font-style: normal;
+}
+.module-list p {
+  font-size: 14px;
+  color: var(--muted);
+  padding-left: 40px;
+}
+@media (max-width: 760px) {
+  .hero {
+    padding: 60px 6% 0;
+  }
+  .hero h1 {
+    font-size: 54px;
+  }
+  .hero-end {
+    display: block;
+    margin: 30px 0 45px;
+  }
+  .hero-end .cta {
+    margin-top: 25px;
+  }
+  .status-strip {
+    font-size: 8px;
+  }
+  .checker,
+  .verdict,
+  .explain {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .checker .contract {
+    padding: 22px;
+  }
+  .verdict h3 {
+    font-size: 28px;
+  }
+  .input-head {
+    flex-wrap: wrap;
+  }
+  .module-list summary {
+    font-size: 16px;
+    gap: 15px;
+  }
+  .module-list summary em {
+    font-size: 9px;
+  }
+  .shader {
+    inset: 0;
+    opacity: 0.05;
+  }
+  :lang(ja) .hero h1 {
+    font-size: 42px;
+  }
+}
