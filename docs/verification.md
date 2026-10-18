@@ -100,9 +100,11 @@ can't read. The full history of every run, including runs before the fixes, is i
 | DashboardReplay | r5 | transformation + unresolved variable | unsupported (rejected before comparison) | yes |
 | FilterProof | corpus-v1 | policy run | fail: sampling bypass (25 bypassed, 14 secrets unredacted at rate 0.5), label canaries (documented scope), FP-007 low-variety token | n/a |
 
-Baseline after fixes: **25 of 27 completed scored runs correct**. The two misses are AlertScenario v4
-(a known limit of a fixed 10 s probe) and one earlier v2 run that predates the `Normal (NoData)`
-fix and was re-run correctly.
+Baseline runs created after the matrix-1 fixes (02:58 UTC): **25 of 27 correct**. The two misses
+are runs that predate later fixes, both re-run correctly afterwards: RouteReplay v3 before the
+policy-settle rule (payments was routed by the previous policy), and AlertScenario v2 before the
+`Normal (NoData)` fix. The AlertScenario v4 baseline miss, a known limit of the fixed 10 s probe,
+predates that window and is shown in the table above.
 
 ## Agent (local qwen2.5:3b) vs baseline, same tools and budget
 
