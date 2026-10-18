@@ -27,15 +27,31 @@
 | 08cc1029 | routereplay | v1-reviewed | baseline | pass | clean candidate | yes | 4 | 0 | 0 | 4.3 |
 | 4df1c1e7 | routereplay | v2-candidate | baseline | fail | seeded: routed_to_intended_receiver | yes | 4 | 0 | 0 | 6.5 |
 | 4ed089f0 | routereplay | v3-candidate | baseline | fail | seeded: grouped_by_team | no | 4 | 0 | 0 | 8.5 |
-| 1e56a235 | metriccontract | v1 | baseline | cancelled | clean candidate | no | 0 | 0 | 0 |  |
-| 18fedc83 | metriccontract | null | baseline | cancelled | clean candidate | no | 0 | 0 | 0 |  |
-| 20009aca | metriccontract | v1 | baseline | cancelled | clean candidate | no | 0 | 0 | 0 |  |
-| 0201da70 | metriccontract | null | baseline | cancelled | clean candidate | no | 0 | 0 | 0 |  |
 | a48d4461 | metriccontract | v5 | agent | inconclusive | seeded: unit_witnessed | no | 2 | 0 | 2147 | 0.3 |
 | e9d0c429 | serieswatch | v2 | agent | inconclusive | seeded: classification truth (0/4 services agree) | no | 1 | 13 | 16202 | 1.6 |
 | 0f3384f8 | dashboardreplay | r3-scope | agent | inconclusive | seeded: scope_matches_reference | no | 4 | 0 | 4287 | 1.8 |
 | 50a415f9 | filterproof | 1.20.1-corpus-v1 | agent | fail | policy run (documented behaviors) | n/a | 6 | 0 | 14304 | 2.8 |
 | 46a3bccc | routereplay | v3-candidate | agent | fail | seeded: grouped_by_team | yes | 10 | 0 | 10156 | 5.2 |
-| ac63221c | alertscenario | v2-candidate | baseline | running | seeded: missing_data_not_reported_as_recovery | no | 0 | 0 | 0 |  |
-| 116aa6c5 | alertscenario | v3-candidate | baseline | queued | seeded: short_spike_does_not_fire | no | 0 | 0 | 0 |  |
-| 3ce7608e | alertscenario | v4-candidate | agent | queued | seeded: short_spike_does_not_fire | no | 0 | 0 | 0 |  |
+| ac63221c | alertscenario | v2-candidate | baseline | pass | seeded: missing_data_not_reported_as_recovery | no | 4 | 0 | 0 | 11.7 |
+| 116aa6c5 | alertscenario | v3-candidate | baseline | fail | seeded: short_spike_does_not_fire | yes | 4 | 0 | 0 | 17.2 |
+| 3ce7608e | alertscenario | v4-candidate | agent | inconclusive | seeded: short_spike_does_not_fire | no | 2 | 3 | 5496 | 18.2 |
+| 475f4ec6 | metriccontract | v5 | agent | inconclusive | seeded: unit_witnessed | no | 2 | 3 | 5143 | 0.3 |
+| 70b9e7f6 | serieswatch | v2 | agent | inconclusive | seeded: classification truth (0/4 services agree) | no | 14 | 0 | 14200 | 1 |
+| e9830cb2 | dashboardreplay | r3-scope | agent | inconclusive | seeded: scope_matches_reference | no | 10 | 0 | 10288 | 1.3 |
+| d2ce9c26 | alertscenario | v2-candidate | baseline | fail | seeded: missing_data_not_reported_as_recovery | yes | 4 | 0 | 0 | 7.7 |
+| eef96374 | routereplay | v1-reviewed | baseline | pass | clean candidate | yes | 4 | 0 | 0 | 10.6 |
+| a32886ce | routereplay | v2-candidate | baseline | fail | seeded: routed_to_intended_receiver | yes | 4 | 0 | 0 | 13.8 |
+| 96bda935 | routereplay | v3-candidate | baseline | fail | seeded: grouped_by_team | yes | 4 | 0 | 0 | 17.3 |
+| 7e9b8586 | alertscenario | v4-candidate | agent | fail | seeded: short_spike_does_not_fire | no | 5 | 5 | 12943 | 23.4 |
+| 51dab887 | metriccontract | v5 | agent | inconclusive | seeded: unit_witnessed | no | 1 | 3 | 4597 | 22.4 |
+| 3fd0a0a8 | filterproof | 1.20.1-corpus-v1 | agent | fail | policy run (documented behaviors) | n/a | 3 | 4 | 16453 | 23 |
+| cff58da6 | serieswatch | v2 | agent | inconclusive | seeded: classification truth (0/4 services agree) | no | 1 | 3 | 4656 | 21.5 |
+| 189ae69a | dashboardreplay | r3-scope | agent | inconclusive | seeded: scope_matches_reference | no | 0 | 0 | 11390 | 21.8 |
+| 66bcd613 | alertscenario | v4-candidate | agent | failed | seeded: short_spike_does_not_fire | no | 3 | 0 | 0 | 25.8 |
+| 27de2328 | routereplay | v2-candidate | agent | failed | seeded: routed_to_intended_receiver | no | 0 | 0 | 0 | 25.8 |
+| 39abf896 | serieswatch | v1 | baseline | pass | seeded: classification truth (4/4 services agree) | yes | 10 | 0 | 0 | 0.3 |
+| eac7169d | alertscenario | v1-reviewed | baseline | pass | clean candidate | yes | 4 | 0 | 0 | 6.8 |
+| 330e402c | metriccontract | v5 | baseline | fail | seeded: unit_witnessed | yes | 4 | 0 | 0 | 0.1 |
+| 5aac7dba | metriccontract | v5 | baseline | fail | seeded: unit_witnessed | yes | 4 | 0 | 0 | 0.1 |
+| d5692cfd | metriccontract | v5 | baseline | fail | seeded: unit_witnessed | yes | 4 | 0 | 0 | 0.1 |
+| fae01874 | metriccontract | v5 | baseline | fail | seeded: unit_witnessed | yes | 4 | 0 | 0 | 0.1 |

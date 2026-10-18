@@ -1,0 +1,27 @@
+{
+  "run_id": "eac7169d-6def-4114-b3a1-8f05d41ff567",
+  "killed_during": "x2:alertscenario.run_scenario:ef8f2237",
+  "final": {
+    "status": "completed",
+    "verdict": "pass",
+    "attempts": 2
+  },
+  "attempts": 2,
+  "reconciled_step": {
+    "interrupted": [
+      "x2:alertscenario.run_scenario:ef8f2237"
+    ]
+  },
+  "interrupted_calls": [
+    "x2:alertscenario.run_scenario:ef8f2237:interrupted"
+  ],
+  "succeeded_before_kill_reused_not_repeated": true,
+  "duplicate_succeeded_action_ids": [],
+  "checks": {
+    "resumed_on_second_attempt": true,
+    "in_flight_call_reconciled": true,
+    "no_duplicate_effects": true,
+    "completed": true
+  },
+  "recorded_at": "2026-10-18T04:06:51.790Z"
+}

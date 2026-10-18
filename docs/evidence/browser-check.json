@@ -1,0 +1,20 @@
+{
+  "base": "http://127.0.0.1:4400",
+  "started_at": "2026-10-18T04:09:30.850Z",
+  "signed_in": true,
+  "run_url": "http://127.0.0.1:4400/#/run/fae01874-867a-4606-bf4a-7a02ff1df53c",
+  "verdict_text": "Verdict: fail",
+  "finding_visible": true,
+  "evidence_panels": 4,
+  "bundle": {
+    "provenance": "baseline run executed on the local stack",
+    "has_sha256": true,
+    "tool_calls": 4,
+    "findings": 1,
+    "artifacts": 3
+  },
+  "drawer_opened": true,
+  "mobile_no_horizontal_scroll": true,
+  "page_errors": [],
+  "finished_at": "2026-10-18T04:09:39.631Z"
+}

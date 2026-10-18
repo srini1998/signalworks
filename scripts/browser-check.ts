@@ -7,11 +7,13 @@ import { chromium } from "@playwright/test";
 const BASE = process.env.SW_WEB ?? "http://127.0.0.1:4400";
 const creds = JSON.parse(readFileSync(".local/demo-users.json", "utf8"));
 const results: Record<string, unknown> = { base: BASE, started_at: new Date().toISOString() };
-const browser = await chromium.launch();
+// Uses an already-installed Playwright Chromium if the pinned revision isn't downloaded.
+const browser = await chromium.launch(process.env.SW_CHROMIUM ? { executablePath: process.env.SW_CHROMIUM } : {});
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const errors: string[] = [];
 page.on("pageerror", (e) => errors.push(e.message));
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+// The app probes /api/me before sign-in; that expected 401 is the only error not counted.
+page.on("console", (m) => m.type() === "error" && !/status of 401/.test(m.text()) && errors.push(m.text()));
 
 await page.goto(BASE);
 await page.getByLabel("Password").fill(creds["maya@signalworks.local"]);
@@ -20,13 +22,13 @@ await page.getByRole("heading", { name: "Does your monitoring still tell the tru
 results.signed_in = true;
 
 await page.getByRole("button", { name: "MetricContract" }).first().click();
-await page.getByRole("heading", { name: "MetricContract" }).waitFor();
+await page.getByRole("heading", { name: "MetricContract", exact: true }).waitFor();
 await page.getByLabel("Candidate").selectOption("v5");
 await page.getByLabel("Planner").selectOption("baseline");
 await page.getByRole("button", { name: "Start run" }).click();
 await page.waitForURL(/#\/run\//);
 results.run_url = page.url();
-await page.getByText(/verdict: (fail|pass|inconclusive)/i).waitFor({ timeout: 240_000 });
+await page.getByRole("heading", { name: /Verdict: (fail|pass|inconclusive)/ }).waitFor({ timeout: 240_000 });
 const verdict = await page.locator(".verdict h3").innerText();
 results.verdict_text = verdict;
 results.finding_visible = await page.getByText("unit_witnessed").first().isVisible();
@@ -47,7 +49,7 @@ await page.getByRole("button", { name: "Close" }).click();
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
 await mobile.context().addCookies(await page.context().cookies());
 await mobile.goto(`${BASE}/#/module/alertscenario`);
-await mobile.getByRole("heading", { name: "AlertScenario" }).waitFor();
+await mobile.getByRole("heading", { name: "AlertScenario", exact: true }).waitFor();
 results.mobile_no_horizontal_scroll = await mobile.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 await mobile.screenshot({ path: "docs/evidence/browser-module-mobile.png", fullPage: false });
 

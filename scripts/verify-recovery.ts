@@ -19,8 +19,8 @@ const busy = async () => (await owner.query("select count(*)::int as n from runs
 while ((await busy()) > 0) await sleep(5000); // run alone so the kill hits our run
 
 const ws = (await api("/api/me")).workspaces[0].id;
-const project = (await api(`/api/workspaces/${ws}/projects`)).find((p: any) => p.module === "serieswatch");
-const run = await api(`/api/projects/${project.id}/runs`, { mode: "baseline", fixture_version: "v1", idempotency_key: `recovery-${Date.now()}` });
+const project = (await api(`/api/workspaces/${ws}/projects`)).find((p: any) => p.module === "alertscenario");
+const run = await api(`/api/projects/${project.id}/runs`, { mode: "baseline", fixture_version: "v1-reviewed", idempotency_key: `recovery-${Date.now()}` });
 console.log("queued", run.id);
 
 // Wait until at least one call succeeded and another is in flight, then kill the worker hard.
