@@ -1,5 +1,7 @@
 # Signalworks: does your monitoring still tell the truth?
 
+**Current public website:** [signalworks-check.vercel.app](https://signalworks-check.vercel.app). The interface is English-only and its main task requires no AI-weight download. See [current interface, datasets and execution boundaries](site/INTERFACE.md). The backend experiments and historical measurements below are separate from the current public UI.
+
 A local lab that turns observability promises into contracts and tests them against a **real,
 version-pinned Grafana stack**: Grafana OSS 13.2.4, Prometheus 3.15.0, Loki 3.7.8 and Alloy 1.20.1.
 Every run records what actually happened as exportable evidence.

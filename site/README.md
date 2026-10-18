@@ -1,8 +1,9 @@
-# Signalworks — public end-user checker
-`npm ci && npm run dev`. The hosted site checks pasted Prometheus text exposition against a declared metric name, type, required labels and exposed-series budget. It parses actual samples, flags malformed/duplicate labels/series, rejects incomplete input rather than silently passing, and reports units/ingestion/alert behavior as requiring further evidence. Up to250KB/5000 samples. It does not implement every OpenMetrics feature (e.g. exemplars); unsupported lines make the parse check fail.
+# Signalworks
 
-Default data: an actual instant-vector snapshot read from the public PromLabs demo for up/scrape_duration_seconds/scrape_samples_scraped. Source/UTC capture/SHA and conversion scope are in src/data/snapshot.json. Gauge TYPE declarations are assigned from documented semantics, not scraped metadata. Visitors can refresh directly from the same fixed public endpoint (no credentials) or paste their own exposition. Errors remain visible; no fake live-data fallback. No upload or connected Grafana account.
+Refresh actual Steam player counts, inspect their metric structure and catch a deliberately broken label.
 
-Optional Gemma3 1B explains findings on-device, with no mutation authority. The trace lives in a secondary side dialog. The six-module real local Grafana/Prometheus/Loki/Alloy lab is separate from the hosted checker: source/readme at repository root, controlled recorded benchmark shown in a secondary disclosure. Agent1/12 vs fixed baseline25/27 is reported honestly (different cohorts; not a randomized comparison).
+The public interface is English-only. Its main task requires no AI weights, account or paid API. See [current interface, data, verification and limits](INTERFACE.md) for the exact execution boundaries and the separately retained backend experiments.
 
-EN/JA (raw metric identifiers and diagnostic names retain their standard English form), ThreeUI Community ConnectivityGraph (MIT), self-hosted OFL fonts, reduced-motion support, no paid APIs or cloud infrastructure. `node tests-contract.mjs` exercises12 parser/contract positive and negative cases. Browser evidence in delivery/evidence/signalworks-check-browser.json in the workspace. Lab credentials, .local/, database and raw session bundles are never included in site deployment.
+Run `npm ci`, then `npm run dev`. `npm run build` checks TypeScript and builds the website.
+
+Optional cloud generation, where offered, is disabled unless a server-side Groq key and `GROQ_FREE_PLAN_CONFIRMED=true` are set for an actual Free Plan account. No credentials, billing or paid fallback are configured. This is a provider-limited inference option, not model training. Never expose keys in Vite environment variables or browser code.
