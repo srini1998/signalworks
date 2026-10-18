@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-10-18T04:09:50.620Z",
+  "baseline": {
+    "runs": 27,
+    "correct": 25
+  },
+  "agent": {
+    "runs": 12,
+    "correct": 1,
+    "rejected_actions": 40
+  },
+  "note": "Correct = clean candidate judged pass, or the seeded invariant appears among findings (classification fixtures: every service matches the private truth). Truth is read only here, never by the agent."
+}

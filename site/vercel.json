@@ -1,0 +1,3 @@
+{
+  "installCommand": "ONNXRUNTIME_NODE_INSTALL=skip npm ci"
+}
