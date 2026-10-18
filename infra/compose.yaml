@@ -1,0 +1,65 @@
+# Signalworks systems under test. Local only: every port binds to 127.0.0.1.
+# Images are pinned by digest (verified 2026-10-17/18). Owned network and volumes are
+# prefixed "signalworks" so cleanup never touches other projects (e.g. Breakroom's Supabase).
+name: signalworks
+x-limits: &limits
+  restart: unless-stopped
+  networks: [sw]
+services:
+  grafana:
+    <<: *limits
+    build: ./grafana
+    image: signalworks/grafana:13.2.4
+    ports: ["127.0.0.1:3300:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_UNIFIED_ALERTING_EVALUATION_TIMEOUT: 10s
+      GF_LOG_LEVEL: warn
+    volumes:
+      - grafana-data:/var/lib/grafana
+    deploy: { resources: { limits: { cpus: "1.0", memory: 768M } } }
+  prometheus:
+    <<: *limits
+    build: ./prometheus
+    image: signalworks/prometheus:v3.15.0
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.retention.time=2d", "--web.enable-lifecycle"]
+    ports: ["127.0.0.1:9390:9090"]
+    volumes:
+      - prometheus-data:/prometheus
+    deploy: { resources: { limits: { cpus: "0.5", memory: 512M } } }
+  exporter:
+    <<: *limits
+    build: ../services/exporter
+    image: signalworks/exporter:0.1
+    environment:
+      EXPORTER_ADMIN_TOKEN: ${EXPORTER_ADMIN_TOKEN:?set in .env}
+    ports: ["127.0.0.1:9310:9310", "127.0.0.1:9311:9311"]
+    deploy: { resources: { limits: { cpus: "0.25", memory: 128M } } }
+  sink:
+    <<: *limits
+    build: ../services/sink
+    image: signalworks/sink:0.1
+    environment:
+      SINK_READ_TOKEN: ${SINK_READ_TOKEN:?set in .env}
+    ports: ["127.0.0.1:9300:9300"]
+    volumes: ["sink-data:/srv/sink"]
+    deploy: { resources: { limits: { cpus: "0.25", memory: 128M } } }
+  loki:
+    <<: *limits
+    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    ports: ["127.0.0.1:3100:3100"]
+    volumes: ["loki-data:/loki"]
+    deploy: { resources: { limits: { cpus: "0.5", memory: 384M } } }
+networks:
+  sw: { name: signalworks-net }
+volumes:
+  grafana-data: { name: signalworks-grafana }
+  prometheus-data: { name: signalworks-prometheus }
+  sink-data: { name: signalworks-sink-v2 }
+  loki-data: { name: signalworks-loki }  # v1 was created root-owned; left unused

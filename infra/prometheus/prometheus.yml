@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+scrape_configs:
+  - job_name: svc-checkout
+    metrics_path: /svc/checkout/metrics
+    static_configs: [{ targets: ["exporter:9310"], labels: { app: "checkout" } }]
+  - job_name: svc-search
+    metrics_path: /svc/search/metrics
+    static_configs: [{ targets: ["exporter:9310"], labels: { app: "search" } }]
+  - job_name: svc-billing
+    metrics_path: /svc/billing/metrics
+    static_configs: [{ targets: ["exporter:9310"], labels: { app: "billing" } }]
+  - job_name: svc-legacy-report
+    metrics_path: /svc/legacy-report/metrics
+    static_configs: [{ targets: ["exporter:9310"], labels: { app: "legacy-report" } }]
+  - job_name: svc-payments
+    metrics_path: /svc/payments/metrics
+    static_configs: [{ targets: ["exporter:9310"], labels: { app: "payments" } }]
+  - job_name: svc-orders
+    metrics_path: /svc/orders/metrics
+    static_configs: [{ targets: ["exporter:9310"], labels: { app: "orders" } }]
