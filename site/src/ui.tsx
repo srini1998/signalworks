@@ -2,28 +2,21 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import gsap from "gsap";
 import type { ModelState } from "./ai/useModel";
 export function useLanguage() {
-  const [ja, set] = useState(false);
-  useEffect(() => {
-    document.documentElement.lang = ja ? "ja" : "en";
-  }, [ja]);
-  return {
-    ja,
-    t: (en: string, jp: string) => (ja ? jp : en),
-    toggle: () => set((j) => !j),
-  };
+  return { ja: false, t: (en: string, _jp: string) => en, toggle: () => {} };
 }
 export function Entrance() {
   useEffect(() => {
+    document.documentElement.lang = "en";
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const ctx = gsap.context(() => {
+    const ctx = gsap.context(() =>
       gsap.from(".reveal", {
         opacity: 0,
         y: 18,
         stagger: 0.09,
         duration: 0.65,
         clearProps: "all",
-      });
-    });
+      }),
+    );
     return () => ctx.revert();
   }, []);
   return null;
@@ -32,7 +25,6 @@ export function ModelControl({
   state,
   load,
   stop,
-  ja,
 }: {
   state: ModelState;
   load: () => void;
@@ -42,38 +34,29 @@ export function ModelControl({
   return (
     <div className="model-control">
       <p>
-        {ja
-          ? "端末上で AI を実行。初回に約860MBをダウンロードします。処理速度は端末に依存します。"
-          : "AI runs on your device. First download ~860 MB; speed depends on your hardware."}
+        {state.phase === "ready"
+          ? "Cloud AI connected. No model download. Requests use a limited free provider quota."
+          : "Optional cloud AI. The main tool works immediately without downloading a model."}
       </p>
-      <button
-        onClick={load}
-        disabled={state.phase === "loading" || state.phase === "ready"}
-      >
-        {state.phase === "idle"
-          ? ja
-            ? "ブラウザAIを読み込む"
-            : "Load browser AI"
-          : state.phase === "loading"
-            ? `${ja ? "読込中" : "Loading"} ${Math.round((state.loaded ?? 0) / 1e6)} MB`
-            : state.phase === "ready"
-              ? `${ja ? "準備完了" : "Ready"} · ${state.device}`
-              : ja
-                ? "再試行"
-                : "Retry model"}
-      </button>
-      {state.phase !== "idle" && (
-        <button className="quiet" onClick={stop}>
-          {ja ? "停止・メモリを解放" : "Stop / release memory"}
+      {state.phase !== "ready" && (
+        <button onClick={load} disabled={state.phase === "loading"}>
+          {state.phase === "loading"
+            ? "Checking connection…"
+            : "Check cloud connection"}
         </button>
       )}
-      {state.message && <p role="alert">{state.message}</p>}
+      {state.phase === "ready" && (
+        <button className="quiet" onClick={stop}>
+          Stop generation
+        </button>
+      )}
+      {state.message && <p role="status">{state.message}</p>}
     </div>
   );
 }
-export function Trace({ entries, ja }: { entries: unknown[]; ja: boolean }) {
-  const [open, set] = useState(false);
-  const ref = useRef<HTMLDialogElement>(null);
+export function Trace({ entries }: { entries: unknown[]; ja: boolean }) {
+  const [open, set] = useState(false),
+    ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     if (open) ref.current?.showModal();
     else ref.current?.close();
@@ -81,19 +64,18 @@ export function Trace({ entries, ja }: { entries: unknown[]; ja: boolean }) {
   return (
     <>
       <button className="trace-tab" onClick={() => set(true)}>
-        {ja ? "エージェントの記録" : "Agent trace"} ({entries.length})
+        Technical details ({entries.length})
       </button>
       <dialog ref={ref} onClose={() => set(false)} onCancel={() => set(false)}>
         <header>
-          <h2>{ja ? "実行の記録" : "Agent trace"}</h2>
+          <h2>Run details</h2>
           <button onClick={() => set(false)} autoFocus>
-            {ja ? "閉じる" : "Close"}
+            Close
           </button>
         </header>
         <p>
-          {ja
-            ? "このページでの実行のみ。サーバーには送信しません。"
-            : "This page session only. Inputs are not sent to our server."}
+          Current page session. Main calculations run in your browser. Optional
+          cloud generation sends its displayed task context to the provider.
         </p>
         <pre>{JSON.stringify(entries, null, 2)}</pre>
       </dialog>
@@ -103,8 +85,6 @@ export function Trace({ entries, ja }: { entries: unknown[]; ja: boolean }) {
 export function Shell({
   name,
   number,
-  ja,
-  toggle,
   children,
 }: {
   name: string;
@@ -122,24 +102,19 @@ export function Shell({
           <span> / {number}</span>
         </a>
         <div>
-          <a href="#how">{ja ? "使い方" : "How it works"}</a>
-          <button className="quiet" onClick={toggle}>
-            {ja ? "English" : "日本語"}
-          </button>
+          <a href="#how">How it works</a>
+          <a href="https://my-portfolio-three-omega-46.vercel.app">
+            Portfolio ↗
+          </a>
         </div>
       </nav>
       {children}
       <footer>
-        <span>
-          Srinivas Venigalla ·{" "}
-          {ja ? "無料・ブラウザ上で実行" : "Free · Runs in your browser"}
-        </span>
+        <span>Srinivas Venigalla · No model download needed</span>
         <a href="https://my-portfolio-three-omega-46.vercel.app">
-          {ja ? "すべてのプロジェクト" : "All projects"} ↗
+          All projects ↗
         </a>
-        <a href="/THIRD_PARTY_NOTICES.txt">
-          {ja ? "モデル・ライセンス" : "Model & licenses"}
-        </a>
+        <a href="/THIRD_PARTY_NOTICES.txt">Data & library licenses ↗</a>
       </footer>
     </>
   );

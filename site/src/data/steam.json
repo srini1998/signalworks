@@ -1,0 +1,28 @@
+{
+  "capturedAt": "2026-10-18T08:21:28.155809+00:00",
+  "results": [
+    {
+      "appid": 730,
+      "name": "Counter-Strike 2",
+      "players": 844030,
+      "source": "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=730",
+      "ok": true
+    },
+    {
+      "appid": 570,
+      "name": "Dota 2",
+      "players": 699645,
+      "source": "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=570",
+      "ok": true
+    },
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "players": 154873,
+      "source": "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=1172470",
+      "ok": true
+    }
+  ],
+  "text": "# HELP steam_players_online Steam-connected players reported by Valve\n# TYPE steam_players_online gauge\nsteam_players_online{game=\"Counter-Strike 2\",appid=\"730\"} 844030\nsteam_players_online{game=\"Dota 2\",appid=\"570\"} 699645\nsteam_players_online{game=\"Apex Legends\",appid=\"1172470\"} 154873\n",
+  "scope": "Recorded public Steam API snapshot. Steam-connected players only. Not affiliated with Valve."
+}

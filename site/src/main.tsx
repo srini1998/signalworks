@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ConnectivityGraph } from "@designcodeio/threeui/components/ConnectivityGraph";
 import {
   ArrowUpRight,
@@ -8,16 +8,17 @@ import {
   Question,
 } from "@phosphor-icons/react";
 import snapshot from "./data/snapshot.json";
+import gaming from "./data/steam.json";
 import lab from "./data/lab.json";
-import { check, vectorText, type Contract } from "./contract";
+import { check, parse, vectorText, type Contract } from "./contract";
 import { useModel } from "./ai/useModel";
 import { Shell, Trace, ModelControl, useLanguage } from "./ui";
 import "./styles.css";
 const initial: Contract = {
-  name: "up",
+  name: "steam_players_online",
   type: "gauge",
-  labels: ["instance", "job"],
-  cap: 20,
+  labels: ["game", "appid"],
+  cap: 3,
 };
 const modules = [
   [
@@ -66,16 +67,17 @@ const modules = [
 function App() {
   const { ja, t, toggle } = useLanguage(),
     ai = useModel();
-  const [text, setText] = useState(snapshot.text),
+  const [text, setText] = useState(gaming.text),
     [contract, setContract] = useState<Contract>(initial),
-    [labelsText, setLabelsText] = useState("instance, job"),
+    [labelsText, setLabelsText] = useState("game, appid"),
     [result, setResult] = useState<ReturnType<typeof check> | null>(null),
     [message, setMessage] = useState(""),
     [entries, setEntries] = useState<unknown[]>([]),
     [busy, setBusy] = useState(false),
     [explanation, setExplanation] = useState(""),
     [provenance, setProvenance] = useState(
-      t("Recorded public demo snapshot", "公開デモの記録済みスナップショット"),
+      "Recorded Steam snapshot · " +
+        new Date(gaming.capturedAt).toLocaleString(),
     );
   const log = (entry: unknown) => setEntries((e) => [...e, entry]);
   function reset() {
@@ -94,37 +96,53 @@ function App() {
       setResult(null);
     }
   }
+  const gameValues = useMemo(() => {
+    try {
+      return (
+        parse(text).families.find((f) => f.name === "steam_players_online")
+          ?.samples ?? []
+      );
+    } catch {
+      return [];
+    }
+  }, [text]);
   async function refresh() {
     setBusy(true);
     try {
-      const r = await fetch(snapshot.source, {
+      const r = await fetch("/api/steam", {
         signal: AbortSignal.timeout(15000),
-        credentials: "omit",
       });
-      if (!r.ok) throw new Error(`Public demo HTTP ${r.status}`);
       const x = await r.json();
-      setText(vectorText(x));
+      if (!r.ok) throw Error(x.error || "Steam refresh unavailable");
+      const values = x.results.filter((v: { ok: boolean }) => v.ok);
+      if (!values.length) throw Error("No counts returned");
+      const metricText =
+        "# HELP steam_players_online Steam-connected players reported by Valve\n# TYPE steam_players_online gauge\n" +
+        values
+          .map(
+            (v: { name: string; appid: number; players: number }) =>
+              `steam_players_online{game="${v.name}",appid="${v.appid}"} ${v.players}`,
+          )
+          .join("\n") +
+        "\n";
+      setText(metricText);
+      setContract(initial);
+      setLabelsText("game, appid");
       setProvenance(
-        `${t("Public demo fetched", "公開デモを取得")} ${new Date().toLocaleString()}`,
+        "Steam API snapshot as of " +
+          new Date(x.capturedAt).toLocaleString() +
+          " · may be cached for 5 minutes",
       );
       reset();
-      log({
-        action: "public-demo-refresh",
-        at: new Date().toISOString(),
-        url: snapshot.source,
-      });
+      log({ action: "steam-refresh", ...x });
       setMessage(
-        t(
-          "Public demo refreshed. Run the contract check.",
-          "デモを更新しました。契約を確認してください。",
-        ),
+        x.results.some((v: { ok: boolean }) => !v.ok)
+          ? "Some games could not be fetched; missing counts were not replaced with zero."
+          : "Steam counts refreshed. Run the structure check.",
       );
     } catch (e) {
       setMessage(
-        t(
-          "Refresh unavailable. The labeled recorded snapshot remains; you can paste your own metrics. ",
-          "更新できません。記録済みのデータを使用するか、自分のメトリクスを貼り付けてください。 ",
-        ) + String(e),
+        "Refresh failed. The currently labeled data remains. " + String(e),
       );
     } finally {
       setBusy(false);
@@ -156,31 +174,31 @@ function App() {
         </div>
         <p className="eyebrow reveal">
           {t(
-            "OBSERVABILITY THAT YOU CAN QUESTION.",
+            "GAME STATS ARE ONLY AS GOOD AS THEIR SIGNALS.",
             "観測結果を、自分で確かめる。",
           )}
         </p>
         <h1 className="reveal">
-          {t("Good signals.", "良い信号。")}
+          {t("Players online.", "良い信号。")}
           <br />
-          <span>{t("Fewer surprises.", "少ない驚き。")}</span>
+          <span>{t("Signals intact?", "少ない驚き。")}</span>
         </h1>
         <div className="hero-end reveal">
           <p className="intro">
             {t(
-              "Your dashboard can be green while a release quietly breaks the metrics behind it. Check what your service actually exposes before the next incident asks you to trust it.",
+              "See real Steam player counts, then test what happens when a release drops a label. Or paste your own service metrics and check that your dashboards still have the fields they need.",
               "画面が正常でも、変更で裏側のメトリクスが壊れているかもしれません。次の障害で頼る前に、サービスが出力する情報を確かめましょう。",
             )}
           </p>
           <a href="#check" className="cta">
-            {t("Check your metrics", "メトリクスを確認")}
+            {t("Explore the gaming signals", "メトリクスを確認")}
             <ArrowUpRight size={22} />
           </a>
         </div>
         <div className="status-strip">
-          <span>01 / CONTRACT</span>
-          <span>02 / EVIDENCE</span>
-          <span>03 / CONFIDENCE</span>
+          <span>01 / PLAYER COUNTS</span>
+          <span>02 / EXPECTED FIELDS</span>
+          <span>03 / CHECK THE CHANGE</span>
         </div>
       </section>
       <main id="check">
@@ -195,20 +213,101 @@ function App() {
             </h2>
           </div>
           <span>
-            {t("No account. No upload.", "登録不要。アップロード不要。")}
+            {t(
+              "Local checks. No account needed.",
+              "登録不要。アップロード不要。",
+            )}
           </span>
+        </div>
+        <section
+          className="gaming-signals"
+          aria-label="Player counts in the current metric text"
+        >
+          {gameValues.map((v, i) => (
+            <article key={i}>
+              <span>{v.labels.game ?? "Unlabeled game"}</span>
+              <strong>{v.value.toLocaleString()}</strong>
+              <p>Steam-connected players</p>
+              <a
+                href={
+                  "https://store.steampowered.com/app/" + (v.labels.appid ?? "")
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                Game on Steam ↗
+              </a>
+            </article>
+          ))}
+        </section>
+        <p className="note">
+          {provenance}. These cards read the metric text below, including edits
+          you make. Player count alone does not establish game or server health.
+        </p>
+        <div className="scenario-actions">
+          <button
+            disabled={busy}
+            onClick={() => {
+              setText(gaming.text);
+              setContract(initial);
+              setLabelsText("game, appid");
+              setProvenance(
+                "Recorded Steam snapshot · " +
+                  new Date(gaming.capturedAt).toLocaleString(),
+              );
+              reset();
+              setMessage("Original gaming snapshot loaded.");
+            }}
+          >
+            Load gaming snapshot
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => {
+              setText(gaming.text.replace(',appid="730"', ""));
+              setContract(initial);
+              setLabelsText("game, appid");
+              setProvenance(
+                "Deliberately broken-label fixture using the recorded Steam counts",
+              );
+              reset();
+              setMessage(
+                "The Counter-Strike series has lost its appid label. Run the check to catch it.",
+              );
+            }}
+          >
+            Try a broken label
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => {
+              setText(snapshot.text);
+              setContract({
+                name: "up",
+                type: "gauge",
+                labels: ["instance", "job"],
+                cap: 20,
+              });
+              setLabelsText("instance, job");
+              setProvenance(
+                "Recorded PromLabs service snapshot · " + snapshot.capturedAt,
+              );
+              reset();
+              setMessage("Service monitoring example loaded.");
+            }}
+          >
+            Try service metrics
+          </button>
         </div>
         <div className="checker">
           <section>
             <div className="input-head">
               <h3>{t("The actual output", "実際の出力")}</h3>
               <button className="quiet" onClick={refresh} disabled={busy}>
-                {t("Refresh public demo", "公開デモを更新")}
+                {t("Refresh Steam counts", "公開デモを更新")}
               </button>
             </div>
-            <p className="note">
-              {provenance} · {snapshot.capturedAt.slice(0, 10)}
-            </p>
+            <p className="note">{provenance}</p>
             <textarea
               disabled={busy}
               aria-label="Prometheus metrics"
@@ -223,7 +322,7 @@ function App() {
             />
             <p className="note">
               {t(
-                "Paste Prometheus text exposition, or use this actual public demo snapshot. 250 KB / 5,000 samples max. This page checks exposed series, not what Prometheus ingested.",
+                "Player counts come from Valve’s public Steam API and are converted to Prometheus gauge samples. Only Steam-connected players are counted. You can paste other metrics too: 250 KB / 5,000 samples max. This is a text-structure check, not a check of Steam server health.",
                 "Prometheus のテキスト出力を貼り付けるか、公開デモを使用します。最大250KB・5,000サンプル。収集後の系列ではなく、出力を確認します。",
               )}
             </p>
@@ -302,13 +401,14 @@ function App() {
               className="quiet"
               disabled={busy}
               onClick={() => {
-                setText(snapshot.text);
+                setText(gaming.text);
                 setContract(initial);
-                setLabelsText("instance, job");
+                setLabelsText("game, appid");
                 setProvenance(
                   t(
-                    "Recorded public demo snapshot",
-                    "公開デモの記録済みスナップショット",
+                    "Recorded Steam snapshot · " +
+                      new Date(gaming.capturedAt).toLocaleString(),
+                    "",
                   ),
                 );
                 reset();
@@ -356,33 +456,60 @@ function App() {
             </div>
           </section>
         )}
-        <section className="explain">
-          <div>
-            <h3>{t("Make it understandable.", "分かる言葉に。")}</h3>
+        {result && (
+          <section className="plain-findings">
+            <h3>What does this mean?</h3>
             <p>
-              {t(
-                "A small on-device agent explains your checks and suggests what to inspect next. It does not change the verdict. Its prose is not fact-checked; units still need independent evidence.",
-                "端末上の小型エージェントが結果と次の確認点を説明します。判定は変更しません。説明文の事実性は未検証で、単位の確認には独立した測定が必要です。",
-              )}
+              {result.verdict === "fail"
+                ? "At least one expected field or structure is missing. A dashboard using that field may hide a series or lose its breakdown after a release. Fix the producer or update the declared expectations before trusting that view."
+                : "The listed structure matches the declared checks. This does not tell us whether a game is healthy, an alert fires or the values were ingested correctly."}
             </p>
-          </div>
-          <div>
-            <ModelControl
-              state={ai.state}
-              load={ai.load}
-              stop={ai.stop}
-              ja={ja}
-            />
-            <button
-              onClick={explain}
-              disabled={!result || busy || ai.state.phase !== "ready"}
-            >
-              {t("Explain the findings", "結果を説明する")}
-            </button>
-            <output>{explanation}</output>
-          </div>
-        </section>
+            <p>
+              For example: if appid disappears, a chart filtered to a game ID
+              may stop showing that game even while players are online.
+            </p>
+          </section>
+        )}
+        <details className="cloud-explain">
+          <summary>Optional cloud explanation</summary>
+          <section className="explain">
+            <div>
+              <h3>{t("Make it understandable.", "分かる言葉に。")}</h3>
+              <p>
+                {t(
+                  "An optional cloud model explains your checks and suggests what to inspect next. It does not change the verdict. Its prose is not fact-checked; units still need independent evidence.",
+                  "端末上の小型エージェントが結果と次の確認点を説明します。判定は変更しません。説明文の事実性は未検証で、単位の確認には独立した測定が必要です。",
+                )}
+              </p>
+            </div>
+            <div>
+              <ModelControl
+                state={ai.state}
+                load={ai.load}
+                stop={ai.stop}
+                ja={ja}
+              />
+              <button
+                onClick={explain}
+                disabled={!result || busy || ai.state.phase !== "ready"}
+              >
+                {t("Explain the findings", "結果を説明する")}
+              </button>
+              <output>{explanation}</output>
+            </div>
+          </section>
+        </details>
         <section id="how" className="how">
+          <p className="note">
+            Gaming data:{" "}
+            <a href="https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetNumberOfCurrentPlayers">
+              Valve’s GetNumberOfCurrentPlayers endpoint ↗
+            </a>
+            . Not affiliated with Valve. Counts exclude offline players. No
+            player identities, account details or API keys are collected.
+            Refresh uses a fixed three-game allowlist and a five-minute cache;
+            failures are shown explicitly.
+          </p>
           <p className="eyebrow">
             {t(
               "WHEN THE TEXT CHECK ISN’T ENOUGH",

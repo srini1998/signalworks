@@ -625,3 +625,5 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
+
+GAMING DATA: public Steam ISteamUserStats/GetNumberOfCurrentPlayers counts, retrieved by app ID from api.steampowered.com. Valve/Steam and named games belong to their respective owners; no affiliation. Counts cover Steam-connected players only. Source documentation https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetNumberOfCurrentPlayers . Recorded capture timestamp and sources in src/data/steam.json; refresh results may be cached for five minutes. No game artwork/logos included.
