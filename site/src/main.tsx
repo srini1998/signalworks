@@ -12,6 +12,7 @@ import gaming from "./data/steam.json";
 import lab from "./data/lab.json";
 import { check, parse, vectorText, type Contract } from "./contract";
 import { useModel } from "./ai/useModel";
+import { checkSummary, summaryPrompt } from "./summary-check";
 import { Shell, Trace, ModelControl, useLanguage } from "./ui";
 import "./styles.css";
 const initial: Contract = {
@@ -75,6 +76,9 @@ function App() {
     [entries, setEntries] = useState<unknown[]>([]),
     [busy, setBusy] = useState(false),
     [explanation, setExplanation] = useState(""),
+    [verdict, setVerdict] = useState<
+      (ReturnType<typeof checkSummary> & { model?: string; ms: number }) | null
+    >(null),
     [provenance, setProvenance] = useState(
       "Recorded Steam snapshot · " +
         new Date(gaming.capturedAt).toLocaleString(),
@@ -151,15 +155,19 @@ function App() {
   async function explain() {
     if (!result) return;
     setBusy(true);
+    setVerdict(null);
     try {
-      const prompt = `Explain these Prometheus exposition checks in 3 short sentences for an application developer. Do not claim units, ingestion or production behavior were verified. Metric ${contract.name}. Findings: ${result.checks.map((c) => `${c.name}: ${c.status} (${c.message})`).join("; ")}. ${ja ? "Reply in Japanese." : ""}`;
+      const samples = parse(text).families.find((f) => f.name === contract.name)?.samples ?? [];
+      const prompt = summaryPrompt(contract.name, samples, result.checks, provenance);
       const r = await ai.generate(
         [{ role: "user", content: prompt }],
         undefined,
-        180,
+        220,
       );
-      setExplanation(r.text);
-      log({ action: "explain", prompt, ...r });
+      const v = checkSummary(r.text, samples, result.checks);
+      setExplanation(r.text.trim());
+      setVerdict({ ...v, model: r.model, ms: r.ms });
+      log({ action: "cloud-summary", prompt, ...r, check: v });
     } catch (e) {
       setMessage(String(e));
     } finally {
@@ -477,7 +485,7 @@ function App() {
               <h3>{t("Make it understandable.", "分かる言葉に。")}</h3>
               <p>
                 {t(
-                  "An optional cloud model explains your checks and suggests what to inspect next. It does not change the verdict. Its prose is not fact-checked; units still need independent evidence.",
+                  "An optional cloud agent summarizes the live values and your check results for on-call. Code then fact-checks the summary: every number must be an actual sample value or check figure, and every failing or unknown check must be named. It never changes the verdict; units still need independent evidence.",
                   "端末上の小型エージェントが結果と次の確認点を説明します。判定は変更しません。説明文の事実性は未検証で、単位の確認には独立した測定が必要です。",
                 )}
               </p>
@@ -496,6 +504,23 @@ function App() {
                 {t("Explain the findings", "結果を説明する")}
               </button>
               <output>{explanation}</output>
+              {verdict && explanation && (
+                <ul className="summary-checks">
+                  <li className={verdict.unknown.length ? "bad" : "ok"}>
+                    {verdict.unknown.length
+                      ? `✗ Numbers not in the live data: ${verdict.unknown.join(", ")}`
+                      : `✓ All ${verdict.quoted.length} quoted numbers are real sample values or check figures`}
+                  </li>
+                  <li className={verdict.missed.length ? "bad" : "ok"}>
+                    {verdict.missed.length
+                      ? `✗ Omits non-passing checks: ${verdict.missed.join(", ")}`
+                      : "✓ Names every non-passing check"}
+                  </li>
+                  <li>
+                    {verdict.model} on Groq’s free plan · {verdict.ms} ms
+                  </li>
+                </ul>
+              )}
             </div>
           </section>
         </details>

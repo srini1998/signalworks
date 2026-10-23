@@ -345,3 +345,5 @@ select {
     font-size: 50px;
   }
 }
+.summary-checks { list-style: none; padding: 0; margin: 10px 0 0; }
+.summary-checks li.bad { font-weight: 700; text-decoration: underline wavy; }
